@@ -1,0 +1,100 @@
+[
+  {
+    "red_player": "anthropic/claude-sonnet-4.5",
+    "yellow_player": "openai/gpt-4o",
+    "red_won": true,
+    "yellow_won": false,
+    "when": "2026-04-15T10:30:00"
+  },
+  {
+    "red_player": "anthropic/claude-opus-4.6",
+    "yellow_player": "openai/gpt-4o",
+    "red_won": false,
+    "yellow_won": true,
+    "when": "2026-04-15T11:45:00"
+  },
+  {
+    "red_player": "anthropic/claude-sonnet-4.5",
+    "yellow_player": "google/gemini-2.5-flash",
+    "red_won": true,
+    "yellow_won": false,
+    "when": "2026-04-15T14:20:00"
+  },
+  {
+    "red_player": "openai/gpt-4o",
+    "yellow_player": "google/gemini-2.5-flash",
+    "red_won": true,
+    "yellow_won": false,
+    "when": "2026-04-15T16:00:00"
+  },
+  {
+    "red_player": "anthropic/claude-opus-4.6",
+    "yellow_player": "anthropic/claude-sonnet-4.5",
+    "red_won": false,
+    "yellow_won": true,
+    "when": "2026-04-15T17:30:00"
+  },
+  {
+    "red_player": "openai/gpt-4o",
+    "yellow_player": "anthropic/claude-opus-4.6",
+    "red_won": false,
+    "yellow_won": true,
+    "when": "2026-04-16T09:15:00"
+  },
+  {
+    "red_player": "google/gemini-2.5-flash",
+    "yellow_player": "anthropic/claude-sonnet-4.5",
+    "red_won": true,
+    "yellow_won": false,
+    "when": "2026-04-16T10:45:00"
+  },
+  {
+    "red_player": "anthropic/claude-opus-4.6",
+    "yellow_player": "google/gemini-2.5-flash",
+    "red_won": true,
+    "yellow_won": false,
+    "when": "2026-04-16T12:00:00"
+  },
+  {
+    "red_player": "openai/gpt-4o",
+    "yellow_player": "anthropic/claude-sonnet-4.5",
+    "red_won": true,
+    "yellow_won": false,
+    "when": "2026-04-16T13:30:00"
+  },
+  {
+    "red_player": "google/gemini-2.5-flash",
+    "yellow_player": "openai/gpt-4o",
+    "red_won": false,
+    "yellow_won": true,
+    "when": "2026-04-16T15:00:00"
+  },
+  {
+    "red_player": "anthropic/claude-sonnet-4.5",
+    "yellow_player": "openai/gpt-5.4",
+    "red_won": false,
+    "yellow_won": true,
+    "when": "2026-04-16T01:36:46.245071"
+  },
+  {
+    "red_player": "anthropic/claude-sonnet-4.5",
+    "yellow_player": "openai/gpt-5.4",
+    "red_won": true,
+    "yellow_won": false,
+    "when": "2026-04-16T01:39:53.525386"
+  },
+  {
+    "red_player": "anthropic/claude-sonnet-4.5",
+    "yellow_player": "openai/gpt-5.4",
+    "red_won": true,
+    "yellow_won": false,
+    "when": "2026-04-16T01:42:17.747753"
+  },
+  {
+    "red_player": "anthropic/claude-sonnet-4.5",
+    "yellow_player": "openai/gpt-5.4",
+    "red_won": true,
+    "yellow_won": false,
+    "when": "2026-04-16T01:48:05.796416"
+  }
+]
