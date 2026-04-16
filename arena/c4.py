@@ -61,12 +61,41 @@ def format_records_for_table(games):
     return df
 
 
-def format_ratings_for_table(ratings):
+def compute_win_stats(games):
     """
-    Turn the ratings into a List of Lists for the Gradio Dataframe
+    Return a dict {player: (wins, total)} from the game history.
+    Draws count as 0.5 wins for both players.
     """
+    stats = {}
+    for game in games:
+        for player in [game.red_player, game.yellow_player]:
+            if player not in stats:
+                stats[player] = [0.0, 0]
+        stats[game.red_player][1] += 1
+        stats[game.yellow_player][1] += 1
+        if game.red_won and not game.yellow_won:
+            stats[game.red_player][0] += 1.0
+        elif game.yellow_won and not game.red_won:
+            stats[game.yellow_player][0] += 1.0
+        else:
+            stats[game.red_player][0] += 0.5
+            stats[game.yellow_player][0] += 0.5
+    return stats
+
+
+def format_ratings_for_table(ratings, games):
+    """
+    Turn the ratings into a pandas DataFrame for the Gradio Dataframe,
+    including win percentage.
+    """
+    win_stats = compute_win_stats(games)
     items = sorted(ratings.items(), key=lambda x: x[1], reverse=True)
-    return [[item[0], int(round(item[1]))] for item in items]
+    rows = []
+    for player, elo in items:
+        wins, total = win_stats.get(player, [0.0, 0])
+        win_pct = f"{wins / total * 100:.1f}%" if total > 0 else "N/A"
+        rows.append([player, int(round(elo)), total, win_pct])
+    return pd.DataFrame(rows, columns=["Player", "ELO", "Games", "Win %"])
 
 
 def load_callback(red_llm, yellow_llm):
@@ -77,6 +106,10 @@ def load_callback(red_llm, yellow_llm):
     enabled = gr.Button(interactive=True)
     disabled = gr.Button(interactive=False)
     message = message_html(game)
+    games = Game.get_games()
+    records_df = format_records_for_table(games)
+    ratings = Game.get_ratings()
+    ratings_df = format_ratings_for_table(ratings, games)
     return (
         game,
         game.board.svg(),
@@ -88,22 +121,19 @@ def load_callback(red_llm, yellow_llm):
         enabled,
         disabled,
         [False],
+        records_df,
+        ratings_df,
     )
 
 
-def leaderboard_callback(game):
+def leaderboard_callback():
     """
     Callback called when the user switches to the Leaderboard tab. Load in the results.
     """
-    print("DEBUG: Loading leaderboard...")
     games = Game.get_games()
-    print(f"DEBUG: Got {len(games)} games")
     records_df = format_records_for_table(games)
-    print("DEBUG: Records formatted")
     ratings = Game.get_ratings()
-    print(f"DEBUG: Got {len(ratings)} ratings")
-    ratings_df = format_ratings_for_table(ratings)
-    print("DEBUG: Leaderboard loaded")
+    ratings_df = format_ratings_for_table(ratings, games)
     return records_df, ratings_df
 
 
@@ -305,16 +335,17 @@ def make_display():
                         yellow_thoughts, yellow_dropdown = player_section(
                             "Yellow", ALL_MODEL_NAMES[1]
                         )
-            with gr.TabItem("Leaderboard") as leaderboard_tab:
+            with gr.TabItem("Leaderboard"):
+                with gr.Row():
+                    refresh_button = gr.Button("Refresh", variant="primary", scale=0)
                 with gr.Row():
                     with gr.Column(scale=1):
                         ratings_df = gr.Dataframe(
-                            headers=["Player", "ELO"],
+                            headers=["Player", "ELO", "Games", "Win %"],
                             label="Ratings (recent models only)",
-                            column_widths=[2, 1],
+                            column_widths=[3, 1, 1, 1],
                             wrap=True,
-                            col_count=2,
-                            row_count=10,
+                            interactive=False,
                             max_height=800,
                             elem_classes=["dataframe-fix"],
                         )
@@ -324,14 +355,10 @@ def make_display():
                             label="Game History",
                             column_widths=[2, 2, 2, 1],
                             wrap=True,
-                            col_count=4,
-                            row_count=10,
+                            interactive=False,
                             max_height=800,
                             elem_classes=["dataframe-fix"],
                         )
-                with gr.Row():
-                    gr.HTML(
-                    )
 
         blocks.load(
             load_callback,
@@ -347,6 +374,8 @@ def make_display():
                 reset_button,
                 stop_button,
                 should_stop,
+                results_df,
+                ratings_df,
             ],
         )
         move_button.click(
@@ -403,11 +432,13 @@ def make_display():
                 reset_button,
                 stop_button,
                 should_stop,
+                results_df,
+                ratings_df,
             ],
         )
 
-        leaderboard_tab.select(
-            leaderboard_callback, inputs=[game], outputs=[results_df, ratings_df]
+        refresh_button.click(
+            leaderboard_callback, inputs=[], outputs=[results_df, ratings_df]
         )
 
     return blocks
